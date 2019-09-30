@@ -1,0 +1,15 @@
+- name: Creating directory for reports
+  file:
+    dest: /tmp/{{ inventory_hostname }}/reports/manual/
+    state: directory
+
+- name: Including variables
+  include_vars:
+    file: monitoring.yml
+    name: monitoring
+
+- name: Fetching and saving monitoring data
+  include_tasks: loop_state.yml
+  loop: "{{ monitoring.state_monitoring }}"
+
+

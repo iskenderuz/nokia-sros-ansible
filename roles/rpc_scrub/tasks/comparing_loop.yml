@@ -1,0 +1,5 @@
+- name: Comparing collected monitoring data to reference  // {{ item.profile }} 
+  template:
+      src: nokia_monitoring_{{ item.profile }}.j2
+      dest: /tmp/{{ inventory_hostname }}/reports/scrub/temp_report_{{ inventory_hostname }}_{{ item.profile }}.txt
+      mode: 0755

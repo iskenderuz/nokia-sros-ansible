@@ -1,0 +1,30 @@
+- name: Checking if {{ item.identifier }} YANG module exists
+  stat:
+    path: /tmp/{{ inventory_hostname }}/YANG/{{ item.identifier }}.yang
+  register: yangResult
+
+- block:
+  - name: Fetching {{ item.identifier }} from {{ inventory_hostname }}
+    netconf_rpc:
+      rpc: get-schema
+      xmlns: "urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring"
+      content:
+          identifier: "{{ item.identifier }}"
+      display: json
+    register: supported_yang_modules
+
+  - name: Saving {{ item.identifier }} from {{ inventory_hostname }}
+    copy:
+      content: "{{ supported_yang_modules.stdout }}"
+      dest: /tmp/{{ inventory_hostname }}/YANG/{{ item.identifier }}.yang
+    delegate_to: localhost
+
+  - name: Making {{ item.identifier }} usable
+    replace:
+      path: /tmp/{{ inventory_hostname }}/YANG/{{ item.identifier }}.yang
+      regexp: '<.+>'
+      replace: ''
+    delegate_to: localhost
+
+  ignore_errors: yes
+  when: yangResult.stat.exists == False

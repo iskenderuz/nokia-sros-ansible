@@ -1,0 +1,6 @@
+- hosts: vsims
+  gather_facts: false
+  tags: [ 'deploy_vsim', 'vsim' ]
+  roles:
+    - deploy_vsim
+

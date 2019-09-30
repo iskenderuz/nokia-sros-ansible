@@ -1,0 +1,54 @@
+- name: Converting the config values in JSON to XML using json2xml
+  command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-conf-combined.jtox  -"
+  args:
+    stdin: "{{ nokia_config | from_yaml | to_json }}"
+  when: nokia_config is defined
+  register: xmlconfig
+  delegate_to: localhost
+
+- name: Fixing some SROS YANG module oddities
+  set_fact:
+    xmlconfig: "{{ xmlconfig.stdout_lines[1] | regex_replace('xmlns:inet=\"urn:ietf:params:xml:ns:yang:ietf-inet-types\"','') | regex_replace(
+'xmlns:yang=\"urn:ietf:params:xml:ns:yang:ietf-yang-types\"','') }}"
+  when: xmlconfig.stdout_lines is defined
+  delegate_to: localhost
+
+- block:
+  - name: Locking 7750 candidate configuration
+    connection: netconf
+    netconf_rpc:
+      rpc: lock
+      content:
+        target:
+          candidate:
+          running:
+    register: config_locked
+
+  - name: Configuring 7750 using NETCONF
+    connection: netconf
+    netconf_rpc:
+      rpc: edit-config
+      content: |
+        <target><candidate/></target>{{ xmlconfig }}
+    when:
+      - config_locked
+      - xmlconfig is defined
+    register: config_changed
+
+  - name: Committing 7750 config using NETCONF
+    connection: netconf
+    netconf_rpc:
+      rpc: commit
+    when: config_locked and config_changed
+    register: config_committed
+
+  - name: Unlocking candidate configuration
+    connection: netconf
+    netconf_rpc:
+      rpc: unlock
+      content:
+        target:
+          candidate:
+          running:
+    when: config_locked
+    register: config_unlocked

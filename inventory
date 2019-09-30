@@ -1,0 +1,6 @@
+[vsims]
+vsim1 ansible_host=10.199.199.187 vsim_release=19.5.R1 vsim_uuid=e3a760b4-e694-4e8c-92d2-e9496dd239c9
+vsim2 ansible_host=10.199.199.188 vsim_release=16.0.R41 vsim_uuid=76b11dc5-d472-4d53-a2fc-6ed05f271ea9
+
+[computes]
+compute1 ansible_host=10.0.41.15

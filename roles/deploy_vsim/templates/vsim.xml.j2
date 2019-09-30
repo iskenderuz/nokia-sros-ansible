@@ -1,0 +1,59 @@
+<domain type='kvm'>
+  <name>{{ inventory_hostname }}</name>
+  <uuid>{{ uuid }}</uuid>
+  <description>Nokia 7750 vSIM</description>
+  <memory unit='GiB'>4</memory>
+  <currentMemory unit='GiB'>4</currentMemory>
+  <cpu mode="custom" match="minimum">
+    <model>SandyBridge</model>
+    <vendor>Intel</vendor>
+  </cpu>
+  <vcpu current="2">2</vcpu>
+  <sysinfo type='smbios'>
+    <system>                        
+      <entry name="product">TiMOS: slot=A chassis=SR-1 card=cpm-1 mda/1=me6-100gb-qsfp28 primary-config=cf3:/config.cfg license-file=cf3:/license.txt</entry>
+    </system>
+  </sysinfo>
+  <os>
+    <type arch="x86_64" machine="pc">hvm</type>
+    <smbios mode="sysinfo"/>
+  </os>
+  <clock offset='utc'>
+    <timer name='pit' tickpolicy='catchup'/>
+    <timer name='rtc' tickpolicy='catchup'/>
+  </clock>
+  <devices>
+    <emulator>/usr/libexec/qemu-kvm</emulator>
+    <controller type='ide' index='0'>
+      <alias name='ide0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0'>
+      <alias name='usb0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <disk type='file' device='disk' snapshot='no'>
+      <driver name='qemu' type='qcow2' cache='writethrough'/>
+      <source file='{{ images_path }}/{{ inventory_hostname }}/{{ inventory_hostname }}.qcow2'/>
+      <target dev='hda' bus='ide'/>
+      <boot order='1'/>
+    </disk>
+{% for bridge in libvirt_networks %}
+    <interface type='bridge'>
+      <source bridge='{{ bridge }}'/>
+      <model type='virtio'/>
+    </interface>
+{% endfor %}
+    <serial type='pty'>
+      <source path='/dev/pts/1'/>
+      <target port='0'/>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/1'>
+      <source path='/dev/pts/1'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+    </devices>
+  <seclabel type='none'/>
+</domain>

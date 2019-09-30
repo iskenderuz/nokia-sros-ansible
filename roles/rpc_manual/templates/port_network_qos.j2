@@ -1,0 +1,12 @@
+<filter>
+  <state xmlns="urn:nokia.com:sros:ns:yang:sr:state">
+{% for port in port_list %}
+    <port>
+      <port-id>{{port}}</port-id>
+      <network><egress/></network>
+      <network><ingress/></network>
+    </port>
+{% endfor %}
+  </state>
+</filter>
+

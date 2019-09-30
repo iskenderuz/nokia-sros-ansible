@@ -1,0 +1,12 @@
+- name: update configuration
+  connection: netconf
+  netconf_config:
+    content: |
+      <config><configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf">
+       <card>
+         <slot-number>{{ item['slot-number'] }}</slot-number>
+         <card-type>{{ item['equipped-type'] }}</card-type>
+       </card>
+      </configure>
+      </config>
+

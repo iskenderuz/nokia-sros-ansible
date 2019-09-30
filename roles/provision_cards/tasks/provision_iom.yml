@@ -1,0 +1,38 @@
+- include_vars:
+    file: nokia_iom
+
+- name: Retrieving IOMs
+  connection: netconf
+  netconf_get:
+    display: json
+    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"><card><slot-number/><equipped-type/></card></state>
+  register: iom
+
+- set_fact:
+    iom_slot: "{{ iom.output['rpc-reply'].data.state.card['slot-number'] }}"
+    iom_type: "{{ iom.output['rpc-reply'].data.state.card['equipped-type'] }}"
+
+- name: Converting the config values in JSON to XML using json2xml
+  command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-combined.jtox  -"
+  args:
+    stdin: "{{ nokia_iom | from_yaml | to_json }}"
+  when: nokia_iom is defined
+  register: iom_xmlconfig
+  delegate_to: localhost
+
+- name: Fixing some SROS YANG module oddities
+  set_fact:
+    iom_xmlconfig: "{{ iom_xmlconfig.stdout_lines[1] | regex_replace('xmlns:inet=\"urn:ietf:params:xml:ns:yang:ietf-inet-types\"','') | regex_replace('xmlns:yang=\"urn:ietf:params:xml:ns:yang:ietf-yang-types\"','') }}"
+  when: iom_xmlconfig.stdout_lines is defined
+
+- name: Saving the config in xml
+  copy:
+    content: "{{ iom_xmlconfig }}"
+    dest: /tmp/{{ inventory_hostname }}/nokia_iom.xml
+
+
+- name: Configuring IOMs
+  connection: netconf
+  netconf_config:
+    content: "{{ iom_xmlconfig }}"
+

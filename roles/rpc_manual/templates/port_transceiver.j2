@@ -1,0 +1,10 @@
+<filter>
+  <state xmlns="urn:nokia.com:sros:ns:yang:sr:state">
+{% for transceiver in transceiver_list %}
+    <port>
+      <port-id>{{transceiver}}</port-id>
+      <transceiver/>
+    </port>
+{% endfor %}
+  </state>
+</filter>

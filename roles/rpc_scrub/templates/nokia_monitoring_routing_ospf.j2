@@ -1,0 +1,33 @@
++------------------------------------------+
+|       Checking of the OSPF status        |
++------------------------------------------+
+
+{% for router_current in COLLECTED.rpc_reply.data.state.router %}
+{% if router_current.ospf is defined %}
+
+  Process OSPF {{ router_current.ospf.ospf_instance }} is configured within routing context {{ router_current.router_name }}
+
+{% for ospf_iface in router_current.ospf.area.interface %}
+{% if ospf_iface.neighbor_count != '0' %}
+    Neighbor:
+      RID:          {{ ospf_iface.neighbor_state.router_id }}
+      IP:           {{ ospf_iface.neighbor_state.address }}
+      Connected to: {{ ospf_iface.interface_name }}
+      Status:       {{ ospf_iface.neighbor_state.oper_state }}
+
+{% else %}
+    There is no OSPF neighbors detected on interface {{ ospf_iface.interface_name }}
+
+{% endif %}
+{% endfor%}
+{% else %}
+  There is no OSPF process configured within routing context {{ router_current.router_name }}
+
+{% endif %}
+{% endfor %}
+
+===========================================
+    Verification of OSPF neighbors is done
+===========================================
+
+

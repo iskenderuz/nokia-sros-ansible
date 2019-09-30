@@ -1,0 +1,6 @@
+- name: Include variables
+  include_vars:
+    dir: vars
+
+- name: Destroying vSIM
+  include_tasks: destroy_vsim.yml

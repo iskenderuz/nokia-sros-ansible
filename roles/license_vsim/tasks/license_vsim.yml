@@ -1,0 +1,28 @@
+- name: Wait 300 seconds for port 22 to become open 
+  wait_for:
+    port: 22
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+    search_regex: OpenSSH
+    delay: 10
+  connection: local
+
+#- name: Copying SROS YANG modules to vsim
+#  command: "sshpass -p admin scp -r -v -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no {{ yang_dir }}/{{release}}/YANG admin@{{ ansible_host }}:/"
+#  delegate_to: localhost
+
+- name: Copying SROS license to vsim
+  command: "sshpass -p admin scp -v -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no {{ license_dir }}/{{release}}/license.txt admin@{{ ansible_host }}:/license.txt"
+  delegate_to: localhost
+
+- name: Reboot the vSIM if the license has changed
+  connection: network_cli
+  sros_command:
+    commands:
+      - admin reboot active now
+
+- name: Wait for SSH to come back online
+  connection: network_cli
+  wait_for_connection:
+    delay: 120
+    timeout: 600
+

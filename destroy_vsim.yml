@@ -1,0 +1,5 @@
+- hosts: vsims
+  gather_facts: false
+  tags: destroy_vsim
+  roles:
+    - destroy_vsim

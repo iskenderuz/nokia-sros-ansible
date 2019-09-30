@@ -1,0 +1,10 @@
+- name: Checking if JTOX template exists
+  stat:
+    path: /tmp/{{ inventory_hostname }}/{{ item.jtox_output }}
+  register: jtoxResult
+
+- name: Building JTOX driver // {{ item.name }}
+  command: "pyang --lax-quote-checks -f jtox -o {{ item.path }}/{{ item.jtox_output}} -p {{ item.path }}/YANG {% for src_module in item.src_yang %} {{ item.path }}/YANG/{{ src_module.module}} {% endfor %}"
+  when: jtoxResult.stat.exists == False
+  delegate_to: localhost
+

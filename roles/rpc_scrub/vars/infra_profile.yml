@@ -1,0 +1,5 @@
+configuration_profiles:
+  - profile: ports
+  - profile: routing_ospf
+  - profile: routing_bgp
+

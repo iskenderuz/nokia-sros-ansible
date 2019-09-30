@@ -1,0 +1,4 @@
+- name: Enabling Model Driven
+  connection: network_cli
+  sros_config:
+    lines: "{{ lookup('template', 'enable_md.j2') }}"

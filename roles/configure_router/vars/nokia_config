@@ -1,0 +1,101 @@
+nokia_config:
+  nokia-conf:configure:
+    system:
+      name: "{{ inventory_hostname }}"
+    card:
+      - slot-number: 1
+        card-type: iom-1
+        admin-state: enable
+        mda:
+          - mda-slot: 1
+            mda-type: me6-100gb-qsfp28
+            admin-state: enable
+    port:
+      - port-id: 1/1/c1
+        admin-state: enable
+        connector:
+          breakout: c4-10g
+      - port-id: 1/1/c1/1
+        admin-state: enable
+        ethernet:
+          mode: hybrid
+          encap-type: dot1q
+          mtu: 9212
+      - port-id: 1/1/c2
+        admin-state: enable
+        connector:
+          breakout: c4-10g
+      - port-id: 1/1/c2/1
+        admin-state: enable
+        ethernet:
+          mode: hybrid
+          encap-type: dot1q
+          mtu: 9212
+    router:
+      - router-name: Base
+        autonomous-system: 65501
+        interface:
+          - interface-name: system
+            admin-state: enable
+            mac: "{{ '52:54:00' | random_mac }}"
+            ipv4:
+              primary:
+                address: "100.100.100.{{ ansible_host.split('.')[3] }}"
+                prefix-length: 32
+          - interface-name: int-1-1-c1-1
+            admin-state: enable
+            port: 1/1/c1/1:0
+            ipv4:
+              primary:
+                address: "192.168.201.{{ ansible_host.split('.')[3] }}"
+                prefix-length: 24
+          - interface-name: int-1-1-c2-1
+            admin-state: enable
+            port: 1/1/c2/1:0
+            ipv4:
+              primary:
+                address: "192.168.202.{{ ansible_host.split('.')[3] }}"
+                prefix-length: 24
+        ospf:
+          - ospf-instance: 0
+            admin-state: enable
+            area:
+              - area-id: 0
+                interface:
+                  - interface-name: system
+                    admin-state: enable
+                    passive: true
+                  - interface-name: int-1-1-c1-1
+                    admin-state: enable
+                    interface-type: point-to-point
+                  - interface-name: int-1-1-c2-1
+                    admin-state: enable
+                    interface-type: point-to-point
+        bgp:
+          router-id: "100.100.100.{{ ansible_host.split('.')[3] }}"
+          group:
+            - group-name: core-rex
+              next-hop-self: true
+              peer-as: 65004
+              family:
+                ipv4: true
+                vpn-ipv4: true
+          neighbor:
+            - ip-address: 71.15.14.54
+              group: core-rex
+    service:
+      vprn:
+        - service-name: demo-vprn
+          admin-state: enable
+          service-id: 1111
+          customer: 1
+          autonomous-system: 13908
+          route-distinguisher: "1:1"
+          interface:
+            - interface-name: int-1-1-c1-1:100
+              ipv4:
+                primary:
+                  address: "192.168.202.{{ ansible_host.split('.')[3] }}"
+                  prefix-length: 24
+              sap:
+                - sap-id: 1/1/c1/1:100

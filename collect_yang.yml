@@ -1,0 +1,7 @@
+- hosts: vsims
+  gather_facts: false
+  connection: netconf
+  tags: nokia_yang
+  roles:
+    - yang_collector
+

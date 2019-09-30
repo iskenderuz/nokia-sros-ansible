@@ -1,0 +1,15 @@
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PasswordA
+uthentication=yes'
+ansible_ssh_user: root
+ansible_ssh_pass: xleguest
+images_path: /var/lib/libvirt/images
+ansible_host_key_auto_add: yes
+ansible_host_key_checking: False
+target_server: 10.0.41.15
+target_server_username: root
+
+libvirt_networks:
+  - vsim_mgmt
+  - vsim_datapath1
+
+vsim_mgmt: 10.199.199.1/24

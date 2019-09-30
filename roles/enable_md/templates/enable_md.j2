@@ -1,0 +1,11 @@
+/configure system name {{inventory_hostname}}
+/configure system security user {{ ansible_ssh_user }} access netconf
+/configure system security profile "administrative" netconf base-op-authorization lock
+/configure system security profile "administrative" netconf base-op-authorization kill-session
+/configure system netconf auto-config-save
+/configure system netconf no shutdown
+/configure system management-interface yang-modules no nokia-modules
+/configure system management-interface yang-modules no base-r13-modules
+/configure system management-interface yang-modules nokia-combined-modules
+/configure system management-interface cli md-cli auto-config-save
+/configure system management-interface configuration-mode model-driven

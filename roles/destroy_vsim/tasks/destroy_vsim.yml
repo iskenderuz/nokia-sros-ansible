@@ -1,0 +1,47 @@
+- block:
+  - name: List the Virtual Machine
+    virt: command=list_vms
+    register: virt_vms
+
+  - name: Destroy vsim VM
+    virt: name={{ inventory_hostname }}
+          state=destroyed
+          uri=qemu:///system
+
+  - name: Undefine vsim VM
+    virt: name={{ inventory_hostname }}
+          command=undefine
+          uri=qemu:///system
+
+  - name: Destroy the images directory
+    file:
+      path: '{{ images_path }}/{{ inventory_hostname }}'
+      state: absent
+
+  - name: Destroy libvirt networks
+    virt_net:
+      command: destroy
+      name: "{{ item }}"
+    with_items:
+      - "{{ libvirt_networks }}"
+
+  - name: Undefine libvirt networks
+    virt_net:
+      command: undefine
+      name: "{{ item }}"
+    with_items:
+      - "{{ libvirt_networks }}"
+
+  delegate_to: "{{ target_server }}"
+  remote_user: "{{ target_server_username }}"
+  become: yes
+  ignore_errors: yes
+
+
+- name: Destroy the images directory
+  file:
+    path: '/tmp/{{ inventory_hostname }}'
+    state: absent
+  ignore_errors: yes
+  delegate_to: localhost
+

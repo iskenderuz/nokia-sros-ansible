@@ -1,0 +1,15 @@
+<filter>
+  <state xmlns="urn:nokia.com:sros:ns:yang:sr:state">
+{% for service in service_list %}
+    <service>
+      <vprn>
+      <service-name>{{service}}</service-name>
+        <interface>
+          <interface-name/><if-oper-status/><protocol/><last-oper-change/><statistics/>
+          <sap><sap-id/><oper-state/></sap>
+        </interface>
+      </vprn>
+    </service>
+{% endfor %}
+  </state>
+</filter>

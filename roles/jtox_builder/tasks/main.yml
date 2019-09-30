@@ -1,0 +1,8 @@
+- name: Importing variables
+  include_vars:
+    file: desired_modules.yml
+
+- name: Creating jtox drivers
+  include_tasks: jtox_builder.yml
+  loop: "{{ desired_modules }}"
+

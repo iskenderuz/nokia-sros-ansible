@@ -1,0 +1,15 @@
+transceiver_list:
+- 1/1/c1
+- 1/1/c2
+
+port_list:
+- 1/1/c1/1
+- 1/1/c2/1
+
+sample_period: 1
+
+service_list:
+- demo-vprn
+
+sap_list:
+- 1/1/c1/1:100

@@ -1,0 +1,2 @@
+- include_tasks: rpc_manual.yml
+

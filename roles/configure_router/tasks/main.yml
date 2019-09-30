@@ -1,0 +1,6 @@
+- name: Importing yaml configuration
+  include_vars:
+    file: nokia_config
+
+- name: Prepaing xml configuration
+  include_tasks: configure_router.yml

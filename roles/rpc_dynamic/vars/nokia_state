@@ -1,0 +1,16 @@
+nokia_state:
+  nokia-state:state:
+    service:
+      vprn:
+        - service-name: demo-vprn
+          interface:
+            - interface-name: int-1-1-c1-1:100
+              sap:
+                - sap-id: 1/1/c1/1:100
+
+    router:
+      - router-name: Base
+        bgp:
+          neighbor:
+            - ip-address: 71.15.14.54
+

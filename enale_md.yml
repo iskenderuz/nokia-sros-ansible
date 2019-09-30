@@ -1,0 +1,6 @@
+- hosts: vsims
+  gather_facts: false
+  connection: network_cli
+  tags: nokia_md
+  roles:
+    - enable_md

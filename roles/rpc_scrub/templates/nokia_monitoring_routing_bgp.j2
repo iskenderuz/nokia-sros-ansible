@@ -1,0 +1,29 @@
++------------------------------------------+
+|        Checking of the BGP status        |
++------------------------------------------+
+
+{% for router_current in COLLECTED.rpc_reply.data.state.router %}
+{% if router_current.bgp is defined %}
+
+  Process BGP is configured within routing context {{ router_current.router_name }}
+{% if router_current.bgp.neighbor is defined %}
+    Neighbor: 
+      ID:          {{ router_current.bgp.neighbor.ip_address }}
+      State:       {{ router_current.bgp.neighbor.statistics.session_state }}
+      AFI/SAFI:    {% for afi in router_current.bgp.neighbor.statistics %}{{ afi }} {% endfor %}
+
+
+{% else %}
+    There is no BGP neighbors detected
+
+{% endif %}
+{% else %}
+  There is no BGP process configured within routing context {{ router_current.router_name }}
+
+{% endif %}
+{% endfor %}
+
+===========================================
+    Verification of BGP neighbors is done
+===========================================
+

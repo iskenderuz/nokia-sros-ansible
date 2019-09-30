@@ -1,0 +1,17 @@
+- name: Including variables
+  include_vars:
+    file: vars.yml
+
+- name: Fetching monitoring data
+  netconf_rpc:
+    rpc: get
+    content: "{{ lookup('template', '{{item.state}}.j2') }}"
+    display: json
+  register: monitoring
+  ignore_errors: yes
+
+- name: Saving monitoring data
+  copy:
+    content: "{{ monitoring.output | to_nice_json }}"
+    dest: /tmp/{{ inventory_hostname }}/reports/manual/{{ inventory_hostname }}_{{item.state}}.json
+  ignore_errors: yes

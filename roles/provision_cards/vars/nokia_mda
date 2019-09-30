@@ -1,0 +1,8 @@
+nokia_mda:
+  nokia-conf:configure:
+    card:
+      - slot-number: 1
+        mda:
+          - mda-slot: 1
+            mda-type: "{{ mda_type }}"
+            admin-state: enable

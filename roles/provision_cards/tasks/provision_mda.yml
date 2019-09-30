@@ -1,0 +1,40 @@
+- include_vars:
+    file: nokia_mda
+
+- name: Retrieving MDAs
+  connection: netconf
+  netconf_get:
+    display: json
+    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"><card><mda><mda-slot/><equipped-type/></mda></card></state>
+  register: mda
+
+- set_fact:
+    mda_type: "{{ mda.output['rpc-reply'].data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='equipped-type') | join(',') }}"
+#    mda_slot: "{{ mda.output['rpc-reply'].data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='mda-slot') | join(',') }}"
+#    iom_slot: "{{ mda.output['rpc-reply'].data.state.card['slot-number'] }}"
+
+
+- name: Converting the config values in JSON to XML using json2xml
+  command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-combined.jtox  -"
+  args:
+    stdin: "{{ nokia_mda | from_yaml | to_json }}"
+  when: nokia_mda is defined
+  register: mda_xmlconfig
+  delegate_to: localhost
+
+- name: Fixing some SROS YANG module oddities
+  set_fact:
+    mda_xmlconfig: "{{ mda_xmlconfig.stdout_lines[1] | regex_replace('xmlns:inet=\"urn:ietf:params:xml:ns:yang:ietf-inet-types\"','') | regex_replace('xmlns:yang=\"urn:ietf:params:xml:ns:yang:ietf-yang-types\"','') }}"
+  when: mda_xmlconfig.stdout_lines is defined
+
+- name: Saving the config in xml
+  copy:
+    content: "{{ mda_xmlconfig }}"
+    dest: /tmp/{{ inventory_hostname }}/nokia_mda.xml
+
+
+- name: Configuring MDAs
+  connection: netconf
+  netconf_config:
+    content: "{{ mda_xmlconfig }}"
+

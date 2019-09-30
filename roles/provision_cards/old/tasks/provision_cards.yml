@@ -1,0 +1,79 @@
+- name: Retrieving IOMs
+  connection: netconf
+  netconf_get:
+    display: json
+    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"><card><slot-number/><equipped-type/></card></state>
+  register: iom
+
+
+- name: Saving IOMs-1
+  copy:
+#    content: "{{ iom.output['rpc-reply'].data.state.card | selectattr('equipped-type', 'search', 'iom') | list }}"
+    content: "{{ iom.output['rpc-reply'].data.state.card  }}"
+    dest: /tmp/{{ inventory_hostname }}/iom.json
+
+- name: Saving IOMs-2
+  shell: 'cat /tmp/{{ inventory_hostname }}/iom.json | json2yaml > /tmp/{{ inventory_hostname }}/iom.yml'
+  delegate_to: localhost
+
+- name: Including vards
+  include_vars: /tmp/{{ inventory_hostname }}/iom.yml
+
+- name: Configuring IOMs
+  connection: netconf
+  netconf_config:
+    content: "{{ lookup('template', 'iom.j2') }}"
+
+
+#- name: Configuring IOMs
+#  connection: netconf
+#  netconf_config:
+#    content: |
+#      <config><configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf">
+#       <card>
+#         <slot-number>{{ iom.output['rpc-reply'].data.state.card['slot-number'] }}</slot-number>
+#         <card-type>{{ iom.output['rpc-reply'].data.state.card['equipped-type'] }}</card-type>
+#       </card>
+#      </configure>
+#      </config>
+
+#- name: Configuring IOMs
+#  include_vars: /tmp/{{ inventory_hostname }}/iom.json 
+#  include_tasks: iom.yml
+#  loop: "{{ iom.output['rpc-reply'].data.state.card }}"
+
+
+- name: Retrieving MDAs
+  connection: netconf
+  netconf_get:
+    display: json
+    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"><card><slot-number>{{ iom.output['rpc-reply'].data.state.card['slot-number'] }}</slot-number><mda><mda-slot/><equipped-type/></mda></card></state>
+  register: mda
+
+
+- name: Saving MDAs
+  copy:
+    content: "{{ mda.output['rpc-reply'].data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | list }}"
+    dest: /tmp/{{ inventory_hostname }}/mda.json
+
+
+
+
+#- name: Configuring MDAs
+#  include_tasks: mda.yml
+#  loop: "{{ mda.output['rpc-reply'].data.state.card }}"
+
+#- name: Configuring MDAs
+#  connection: netconf
+#  netconf_config:
+#    content: |
+#      <config><configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf">
+#       <card>
+#         <slot-number>{{ iom.output['rpc-reply'].data.state.card['slot-number'] }}</slot-number>
+#         <mda>
+#           <mda-slot>{{ mda.output['rpc-reply'].data.state.card['slot-number']['mda-slot'] }}</mda-slot>
+#           <mda-type>{{ mda.output['rpc-reply'].data.state.card['slot-number']['equipped-type'] }}</card-type>
+#         </mda>
+#       </card>
+#      </configure>
+#      </config>

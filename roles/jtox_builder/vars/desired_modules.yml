@@ -1,0 +1,13 @@
+desired_modules:
+    - name: Nokia Conf Combined
+      jtox_output: nokia-conf-combined.jtox
+      path: /tmp/{{ inventory_hostname }}
+      src_yang:
+          - module: nokia-conf.yang
+    - name: Nokia State Combined
+      jtox_output: nokia-state-combined.jtox
+      path: /tmp/{{ inventory_hostname }}
+      src_yang:
+          - module: nokia-state.yang
+
+

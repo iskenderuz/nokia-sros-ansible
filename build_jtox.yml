@@ -1,0 +1,6 @@
+- hosts: vsims
+  gather_facts: false
+  connection: netconf
+  tags: nokia_jtox
+  roles:
+    - jtox_builder

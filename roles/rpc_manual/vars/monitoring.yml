@@ -1,0 +1,12 @@
+state_monitoring:
+  - state: base_interfaces
+  - state: bgp_neighbors
+  - state: filter_stats
+  - state: inventory
+  - state: port_ethernet
+  - state: port_network_qos
+  - state: port_statistics
+  - state: port_transceiver
+  - state: resources
+  - state: vprn_interfaces
+  - state: sap_qos

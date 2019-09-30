@@ -1,0 +1,45 @@
+- name: Creating directory for reports
+  file:
+    dest: /tmp/{{ inventory_hostname }}/reports/scrub/
+    state: directory
+
+- name: Importing Infra profile
+  include_vars:
+      file: infra_profile.yml
+      name: PROFILE
+
+- name: Fetching monitoring data
+  netconf_get:
+      filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
+      display: json
+  register: state_all_json
+
+- name: Saving monitoring data
+  copy:
+      content: "{{ state_all_json.output | to_nice_json }}"
+      dest: /tmp/{{ inventory_hostname }}/reports/scrub/{{ inventory_hostname }}_yang_monitoring.json
+
+- name: Modifying collected monitoring
+  replace:
+      path: /tmp/{{ inventory_hostname }}/reports/scrub/{{ inventory_hostname }}_yang_monitoring.json
+      regexp: '-'
+      replace: '_'
+
+- name: Importing collected monitoring
+  include_vars:
+      file: /tmp/{{ inventory_hostname }}/reports/scrub/{{ inventory_hostname }}_yang_monitoring.json
+      name: COLLECTED
+
+- name: Searching data
+  include_tasks: comparing_loop.yml
+  loop: "{{ PROFILE.configuration_profiles }}"
+
+- name: Compiling reports
+  shell: "cat /tmp/{{ inventory_hostname }}/reports/scrub/temp_report_{{ inventory_hostname }}_* > /tmp/{{ inventory_hostname }}/reports/scrub/{{ inventory_hostname }}_test_report.txt"
+
+- name: Deleting temp files
+  shell: "rm -f /tmp/{{ inventory_hostname }}/reports/scrub/temp_report_{{ inventory_hostname }}_*"
+
+- name: Reporting 200 OK
+  debug:
+      msg: "Collection of monitoring data from {{ inventory_hostname }} is done."

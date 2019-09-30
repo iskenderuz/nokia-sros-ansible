@@ -1,0 +1,40 @@
+- name: Importing yaml configuration
+  include_vars:
+    file: nokia_state
+  ignore_errors: true
+
+- name: Converting the config values in JSON to XML using json2xml
+  command: "json2xml /tmp/{{ inventory_hostname }}/nokia-state-combined.jtox  -"
+  args:
+    stdin: "{{ nokia_state | from_yaml | to_json }}"
+  when: nokia_state is defined
+  register: xmlstate
+  delegate_to: localhost
+
+- name: Fixing some SROS YANG module oddities
+  set_fact:
+    xmlstate: "{{ xmlstate.stdout_lines[1] | regex_replace('xmlns:inet=\"urn:ietf:params:xml:ns:yang:ietf-inet-types\"','') | regex_replace('xmlns:yang=\"urn:ietf:params:xml:ns:yang:ietf-yang-types\"','') | regex_replace('nc:data','nc:filter') }}"
+  when: xmlstate.stdout_lines is defined
+  delegate_to: localhost
+
+- name: Creating directory for reports
+  file:
+    dest: /tmp/{{ inventory_hostname }}/reports/dynamic/
+    state: directory
+  delegate_to: localhost
+
+- name: Fetching monitoring data
+  netconf_rpc:
+    rpc: get
+    content: "{{ xmlstate }}"
+    display: json
+  register: monitoring
+  ignore_errors: yes
+
+- name: Saving monitoring data
+  copy:
+    content: "{{ monitoring.output | to_nice_json }}"
+    dest: /tmp/{{ inventory_hostname }}/reports/dynamic/{{ inventory_hostname }}.json
+  ignore_errors: yes
+  delegate_to: localhost
+

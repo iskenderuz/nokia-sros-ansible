@@ -1,0 +1,7 @@
+nokia_iom:
+  nokia-conf:configure:
+    card:
+      - slot-number: "{{ iom_slot }}"
+        card-type: "{{ iom_type }}"
+        admin-state: enable
+         

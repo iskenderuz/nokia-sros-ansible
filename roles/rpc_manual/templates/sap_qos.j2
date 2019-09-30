@@ -1,0 +1,17 @@
+<filter>
+  <state xmlns="urn:nokia.com:sros:ns:yang:sr:state">
+{% for sap in sap_list %}
+    <service>
+      <vprn>
+        <interface>
+          <sap>
+            <sap-id>{{sap}}</sap-id>
+            <ingress><qos><sap-ingress><queue/></sap-ingress></qos></ingress>
+            <egress><qos><sap-egress><queue/></sap-egress></qos></egress>
+          </sap>
+        </interface>
+      </vprn>
+    </service>
+{% endfor %}
+  </state>
+</filter>

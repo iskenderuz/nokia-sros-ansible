@@ -1,0 +1,11 @@
+release: 19.5.R1
+vmname: vsim1
+uuid: e3a760b4-e694-4e8c-92d2-e9496dd239c9
+bridge: virbr0
+
+mgmt_ip: 10.0.41.187
+mgmt_netmask: 24
+mgmt_gateway: 10.0.41.1
+mgmt_static_route_list:
+  - 0.0.0.0/1
+  - 128.0.0.0/1

@@ -1,0 +1,6 @@
+#- name: Include variables
+#  include_vars:
+#    dir: vars
+
+- name: Deploying vSIM
+  include_tasks: deploy_vsim.yml

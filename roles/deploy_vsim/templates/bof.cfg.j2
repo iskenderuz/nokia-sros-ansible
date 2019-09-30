@@ -1,0 +1,15 @@
+primary-image        cf3:/timos/
+primary-config       cf3:/config.cfg
+license-file         cf3:\license.txt
+duplex               full
+speed                100
+wait                 3
+persist              off
+console-speed        115200
+address          {{ ansible_host }}/{{ mgmt_netmask }}
+{% if mgmt_static_route_list is defined %}
+{% for mgmt_static_route in mgmt_static_route_list %}
+static-route {{ mgmt_static_route }} next-hop {{ mgmt_gateway }}
+{% endfor %}
+{% endif %}
+
