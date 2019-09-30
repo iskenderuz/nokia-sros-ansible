@@ -2,7 +2,7 @@
 |        Checking of the BGP status        |
 +------------------------------------------+
 
-{% for router_current in COLLECTED.rpc_reply.data.state.router %}
+{% for router_current in COLLECTED.data.state.router %}
 {% if router_current.bgp is defined %}
 
   Process BGP is configured within routing context {{ router_current.router_name }}
