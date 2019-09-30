@@ -13,7 +13,7 @@
 
 - name: 
   set_fact: 
-    nokia_schemas: "{{ all_supported_schemas.output['rpc-reply'].data['netconf-state'].schemas.schema | selectattr('identifier', 'match', 'nokia') | list | to_nice_json}}"
+    nokia_schemas: "{{ all_supported_schemas.output.data['netconf-state'].schemas.schema | selectattr('identifier', 'match', 'nokia') | list | to_nice_json}}"
 
 #- name: Fetching all supported YANG modules from {{ inventory_hostname }} / {{ ansible_network_os }}
 #  include_tasks: saving_yang.yml
