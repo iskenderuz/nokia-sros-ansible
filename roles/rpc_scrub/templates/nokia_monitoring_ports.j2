@@ -2,7 +2,7 @@
 |     Checking of the port status    |
 +------------------------------------------+
 
-{% for port_current in COLLECTED.rpc_reply.data.state.port %}
+{% for port_current in COLLECTED.data.state.port %}
     Port: {{ port_current.port_id }}
     Status: {{ port_current.oper_state }}
 
