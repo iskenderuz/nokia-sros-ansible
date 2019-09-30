@@ -9,8 +9,8 @@
   register: iom
 
 - set_fact:
-    iom_slot: "{{ iom.output['rpc-reply'].data.state.card['slot-number'] }}"
-    iom_type: "{{ iom.output['rpc-reply'].data.state.card['equipped-type'] }}"
+    iom_slot: "{{ iom.output.data.state.card['slot-number'] }}"
+    iom_type: "{{ iom.output.data.state.card['equipped-type'] }}"
 
 - name: Converting the config values in JSON to XML using json2xml
   command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-combined.jtox  -"
