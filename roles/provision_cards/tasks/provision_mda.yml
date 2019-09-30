@@ -9,9 +9,9 @@
   register: mda
 
 - set_fact:
-    mda_type: "{{ mda.output['rpc-reply'].data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='equipped-type') | join(',') }}"
-#    mda_slot: "{{ mda.output['rpc-reply'].data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='mda-slot') | join(',') }}"
-#    iom_slot: "{{ mda.output['rpc-reply'].data.state.card['slot-number'] }}"
+    mda_type: "{{ mda.output.data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='equipped-type') | join(',') }}"
+#    mda_slot: "{{ mda.output.data.state.card.mda | selectattr('equipped-type', 'search', 'gb') | map(attribute='mda-slot') | join(',') }}"
+#    iom_slot: "{{ mda.output.data.state.card['slot-number'] }}"
 
 
 - name: Converting the config values in JSON to XML using json2xml
