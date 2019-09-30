@@ -13,7 +13,7 @@
     iom_type: "{{ iom.output.data.state.card['equipped-type'] }}"
 
 - name: Converting the config values in JSON to XML using json2xml
-  command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-combined.jtox  -"
+  command: "json2xml -t config /tmp/{{ inventory_hostname }}/nokia-conf-combined.jtox  -"
   args:
     stdin: "{{ nokia_iom | from_yaml | to_json }}"
   when: nokia_iom is defined
