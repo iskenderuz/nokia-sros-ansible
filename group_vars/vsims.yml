@@ -9,9 +9,9 @@ ansible_host_key_auto_add: yes
 version: '{{ vsim_release }}'
 vmname: '{{ inventory_hostname }}'
 uuid: "{{ vsim_uuid }}"
-yang_dir: files/{{ vsim_release }}
-license_dir: files/{{ vsim_release }}
-image_dir: files/{{ vsim_release }}
+yang_dir: /root/files/{{ vsim_release }}
+license_dir: /root/files/{{ vsim_release }}
+image_dir: /root/files/{{ vsim_release }}
 
 bridge: virbr0
 
