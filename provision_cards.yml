@@ -1,6 +1,6 @@
 - hosts: vsims
   gather_facts: false
-  tags: ['never', 'cards']
+  tags: 'cards'
   connection: netconf
   roles:
     - provision_cards
