@@ -17,17 +17,9 @@
 
 #- name: Fetching all supported YANG modules from {{ inventory_hostname }} / {{ ansible_network_os }}
 #  include_tasks: saving_yang.yml
-#  loop: "{{ all_supported_schemas.output['rpc-reply'].data['netconf-state'].schemas.schema }}"
+#  loop: "{{ all_supported_schemas.output.data['netconf-state'].schemas.schema }}"
 
 - name: Fetching Nokia only supported YANG modules from {{ inventory_hostname }} / {{ ansible_network_os }}
   include_tasks: saving_yang.yml
   loop: "{{ nokia_schemas }}"
-
-
-- name: Workaround for SROS release 16.0.R41
-  copy:
-    src: files/16.0.R41/YANG/nokia-sros-yang-extensions.yang
-    dest: /tmp/{{ inventory_hostname }}/YANG
-  when: vsim_release == "16.0.R41"
-  delegate_to: localhost
-
+  
