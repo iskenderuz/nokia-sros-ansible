@@ -38,22 +38,6 @@ license.txt
 /YANG
 ```
 
-3) Enable passwordless ssh towards RHEL/Centos computes:
-
-```
-ssh-keygen
-ssh-copy-id root@[target_compute_host]
-```
-
-4) For ESXi / vCenter Only, install the following packages.
-
-```
-pip install pyvmomi
-pip install jmespath
-&
-ovftool (from VMware)
-```
-
 
 
 ### Start, license and configure a vSIM using libvirt on CentOS
